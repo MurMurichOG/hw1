@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movies</title>
+</head>
+<body>
+<h1>Movie list</h1>
+<h3>------------------------------------------</h3>
+{% for i in movies %}
+    <img src="{{i.image.url}}" alt="img" height="400" width="600">
+    <h2>{{i.title}}</h2>
+    <p>{{i.description}}</p>
+    <a href="/movies/{{i.id}}">Подробнее</a>
+{% endfor %}
+</body>
+</html>
