@@ -1,0 +1,18 @@
+<h1>{{ tv_show.title }}</h1>
+<p>{{ tv_show.description }}</p>
+<p>Release Date: {{ tv_show.release_date }}</p>
+<p>Rating: {{ tv_show.rating }}</p>
+
+<h2>Reviews:</h2>
+<ul>
+  {% for review in reviews %}
+    <li>{{ review.text }} - {{ review.stars }} stars</li>
+  {% endfor %}
+</ul>
+
+<h2>Add a Review:</h2>
+<form method="post" action="{% url 'tv_show_detail' pk=tv_show.pk %}">
+  {% csrf_token %}
+  {{ review_form.as_p }}
+  <button type="submit">Submit</button>
+</form>
