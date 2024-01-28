@@ -4,6 +4,11 @@ from .models import TVShow
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import TVShowForm, ReviewForm
+from django.shortcuts import render
+
+def show_list(request):
+    shows = [...]
+    return render(request, 'show_list.html', {'shows': shows})
 
 def tv_show_detail(request, pk):
     tv_show = get_object_or_404(TVShow, pk=pk)
