@@ -26,5 +26,6 @@ class Review(models.Model):
     text = models.TextField()
     stars = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
     tv_show = models.ForeignKey(TVShow, on_delete=models.CASCADE, related_name='reviews')
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     def __str__(self):
         return self.title

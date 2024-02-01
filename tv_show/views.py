@@ -1,10 +1,26 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Movie
+from .models import Movie, Review
 from .models import TVShow
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import TVShowForm, ReviewForm
-from django.shortcuts import render
+from django.views.generic import ListView
+
+class MovieListView(ListView):
+    model = Movie
+    template_name = 'movie_list.html'
+    context_object_name = 'movies'
+
+    def get_queryset(self):
+        movies = Movie.objects.all()
+        for movie in movies:
+            movie.num_reviews = Review.objects.filter(movie=movie).count()
+        return movies
+
+def search_movies(request):
+    query = request.GET.get('q', '')
+    movies = Movie.objects.filter(title__icontains=query)
+    return render(request, 'search_results.html', {'movies': movies, 'query': query})
 
 def show_list(request):
     shows = [...]

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <p>Search Query: {{ query }}</p>
+    <ul>
+        {% for movie in movies %}
+            <li>
+                <strong>{{ movie.title }}</strong>
+                <p>{{ movie.description }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
