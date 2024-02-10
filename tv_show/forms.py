@@ -6,7 +6,7 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['text', 'stars']
 
-class TVShowForm(forms.ModelForm):
+class Movie(forms.ModelForm):
     class Meta:
         model = TVShow
         fields = ['title', 'description', 'release_date', 'rating']

@@ -1,122 +1,104 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from .models import Movie, Review
-from .models import TVShow
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from .forms import TVShowForm, ReviewForm
-from django.views.generic import ListView
+from .forms import ReviewForm, Movie
+from django.views import generic
 
-class MovieListView(ListView):
+
+class MovieListView(generic.ListView):
+    template_name = 'movies/movies.html'
     model = Movie
-    template_name = 'movie_list.html'
     context_object_name = 'movies'
+    extra_context = {'form': Review.objects.all()}
 
     def get_queryset(self):
-        movies = Movie.objects.all()
-        for movie in movies:
-            movie.num_reviews = Review.objects.filter(movie=movie).count()
-        return movies
+        return self.model.objects.all()
 
-def search_movies(request):
-    query = request.GET.get('q', '')
-    movies = Movie.objects.filter(title__icontains=query)
-    return render(request, 'search_results.html', {'movies': movies, 'query': query})
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        movie_comments_count = {}
 
-def movie_detail(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    reviews = Review.objects.filter(movie=movie)
-    return render(request, 'movie_detail.html', {'movie': movie, 'reviews': reviews})
+        for movie in context['movies']:
+            comments_count = movie.reviews.count()
+            movie_comments_count[movie] = comments_count
 
-def create_movie(request):
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        Movie.objects.create(title=title, description=description)
-        return redirect('movie_list')
-    return render(request, 'create_movie.html')
+        context['movie_comments_count'] = movie_comments_count
+        return context
 
-def update_movie(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    if request.method == 'POST':
-        movie.title = request.POST.get('title')
-        movie.description = request.POST.get('description')
-        movie.save()
-        return redirect('movie_list')
-    return render(request, 'update_movie.html', {'movie': movie})
 
-def delete_movie(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    if request.method == 'POST':
-        movie.delete()
-        return redirect('movie_list')
-    return render(request, 'delete_movie.html', {'movie': movie})
+class MovieDetailMovie(generic.DetailView):
+    model = Movie
+    template_name = 'movies/movies_detail.html'
+    extra_context = {'form': Review.objects.all()}
 
-def create_review(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    if request.method == 'POST':
-        text = request.POST.get('text')
-        rating = request.POST.get('rating')
-        Review.objects.create(movie=movie, text=text, rating=rating)
-        return redirect('movie_list')
-    return render(request, 'create_review.html', {'movie': movie})
+    def get_object(self, **kwargs):
+        movie = self.kwargs.get('id')
+        return get_object_or_404(Movie, id=movie)
 
-def search_movies(request):
-    query = request.GET.get('q', '')
-    movies = Movie.objects.filter(title__icontains=query)
-    return render(request, 'search_results.html', {'movies': movies, 'query': query})
 
-def movies_list(request):
-    movies = Movie.objects.all()
-    return render(request, 'movies/movies.html',{'movies': movies})
+class RewiewCreateView(generic.CreateView):
+    template_name = 'movies/crud/comments.html'
+    form_class = ReviewForm
+    context_object_name = 'form'
+    success_url = '/'
+    queryset = Movie.objects.all()
 
-def show_list(request):
-    shows = [...]
-    return render(request, 'show_list.html', {'shows': shows})
+    def form_valid(self, form):
+        return super(RewiewCreateView, self).form_valid(form=form)
 
-def tv_show_detail(request, pk):
-    tv_show = get_object_or_404(TVShow, pk=pk)
-    reviews = tv_show.reviews.all()
-    if request.method == 'POST':
-        review_form = ReviewForm(request.POST)
-        if review_form.is_valid():
-            review = review_form.save(commit=False)
-            review.tv_show = tv_show
-            review.save()
-            return HttpResponseRedirect(reverse('tv_show_detail', args=[pk]))
-    else:
-        review_form = ReviewForm()
 
-    return render(request, 'tv_show_detail.html', {'tv_show': tv_show, 'reviews': reviews, 'review_form': review_form})
+class MovieDeleteView(generic.DeleteView):
+    template_name = 'movies/crud/confirm_delete.html'
+    success_url = '/'
+    queryset = Movie.objects.all()
 
-def tv_show_list(request):
-    tv_shows = TVShow.objects.all()
-    return render(request, 'tv_show_list.html', {'tv_shows': tv_shows})
+    def get_object(self, **kwargs):
+        movie = self.kwargs.get('id')
+        return get_object_or_404(Movie, id=movie)
 
-def tv_show_create(request):
-    if request.method == 'POST':
-        form = TVShowForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('tv_show_list'))
-    else:
-        form = TVShowForm()
 
-    return render(request, 'tv_show_form.html', {'form': form})
+class MovieUpdateView(generic.UpdateView):
+    template_name = 'movies/crud/update.html'
+    form_class = Movie
+    model = Movie
+    context_object_name = 'form'
+    extra_context = {'movie': Movie.objects.all()}
+    queryset = Movie.objects.all()
+    success_url = '/'
 
-def tv_show_update(request, pk):
-    tv_show = get_object_or_404(TVShow, pk=pk)
+    def get_object(self, **kwargs):
+        movie = self.kwargs.get('id')
+        return get_object_or_404(Movie, id=movie)
 
-    if request.method == 'POST':
-        form = TVShowForm(request.POST, instance=tv_show)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('tv_show_list'))
-    else:
-        form = TVShowForm(instance=tv_show)
+    def form_valid(self, form):
+        return super(MovieUpdateView, self).form_valid(form=form)
 
-    return render(request, 'tv_show_form.html', {'form': form})
 
-def tv_show_delete(request, pk):
-    tv_show = get_object_or_404(TVShow, pk=pk)
-    tv_show.delete()
-    return HttpResponseRedirect(reverse('tv_show_list'))
+class MovieCreateView(generic.CreateView):
+    template_name = 'movies/crud/create.html'
+    success_url = '/'
+    model = Movie
+    form_class = Movie
+    queryset = Movie.objects.all()
+    context_object_name = 'form'
+    extra_context = {'movie': model.objects.all()}
+
+    def form_valid(self, form):
+        return super(MovieCreateView, self).form_valid(form=form)
+
+
+class SearchView(generic.ListView):
+    model = Movie
+    template_name = 'movies/movies.html'
+    paginate_by = 5
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        print(f"Query: {query}")
+        return Movie.objects.filter(title__icontains=query)
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        if query:
+            self.context_object_name = 'movies'
+            return Movie.objects.filter(title__icontains=query)
+        else:
+            return Movie.objects.all()
