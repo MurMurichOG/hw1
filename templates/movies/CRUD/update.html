@@ -1,0 +1,14 @@
+{% include 'header.html' %}
+<body>
+<div class="contentt">
+<br><br>
+    <h2>Изменить фильм</h2>
+    <hr>
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+</div>
+{% include 'footer.html' %}
+</body>

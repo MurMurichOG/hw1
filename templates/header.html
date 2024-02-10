@@ -1,0 +1,11 @@
+<li class="nav-item">
+<a class="nav-link" href="/movies/add_post/">Добавить коммент</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="/movie/create/">Добавить фильм</a>
+</li>
+<li style="position: fixed; right: 20px; top: 5px">
+    <form action="{%  url 'search' %}" method="get" role="search">
+    <input type="text" name="q" value="{{ q }}" placeholder="Поиск...">
+    </form>
+</li>
