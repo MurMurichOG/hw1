@@ -1,0 +1,12 @@
+{% include 'header.html' %}
+<body>
+<br><br><br>
+<div class="contentt" style="margin-bottom: 300px; margin-top: 100px">
+<form enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Вход</button>
+</form>
+</div>
+{% include 'footer.html' %}
+</body>

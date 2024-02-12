@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>User List</title>
-</head>
+{% include 'header.html' %}
 <body>
-    <h1>User List</h1>
-    <ul>
-        {% for user in users %}
-            <li>
-                <h2>{{ user.username }}</h2>
-                <p>Email: {{ user.email }}</p>
-                <p>First Name: {{ user.first_name }}</p>
-                <p>Last Name: {{ user.last_name }}</p>
-            </li>
-        {% endfor %}
-    </ul>
+<br><br><br>
+<div class="contentt">
+    {% if acc %}
+    {% for i in acc %}
+    <p>{{i.username}}</p>
+    <p>{{i.bio}}</p>
+    {% endfor %}
+    {% else %}
+    <h1>Здесь пока пусто</h1>
+    {% endif %}
+</div>
+{% include 'footer.html' %}
 </body>
 </html>

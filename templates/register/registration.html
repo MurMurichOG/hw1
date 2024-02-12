@@ -1,14 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-</head>
+{% include 'header.html' %}
+{% load static %}
 <body>
-    <h2>Register</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
+<div class="content">
+    <br><br><br><br><br><br><br>
+    <div class="register" style="display: none; position: absolute; top: 100px; left: 100px; width: 70%;
+     height: auto; z-index: 1000; background: white; border: black solid 2px; padding: 10px; margin-bottom: 40px;
+border-radius: 10px">
+        <form action="/signup/" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Регистрация</button>
+            <button id="cancel">Отмена</button>
+        </form>
+    </div>
+    <button id="sign-up">Регистрация</button>
+    <button><a href="/signin/">Вход</a></button>
+    <button style="margin-bottom: 360px"><a class="clrd-black" href="/signout/">Выйти</a></button>
+</div>
+<br><br><br><br><br><br><br><br>
+{% include 'footer.html' %}
 </body>
-</html>
+<script>
+    let elem_button = document.getElementById('sign-up')
+    let elem_block = document.querySelector('.register')
+    let elem_button_cancel = document.getElementById('cancel')
+    elem_button.addEventListener('click', function () {
+        elem_block.style.display = 'block'
+    })
+    elem_button_cancel.addEventListener('click', function () {
+        elem_block.style.display = 'none'
+    })
+</script>

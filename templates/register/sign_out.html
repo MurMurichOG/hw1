@@ -1,0 +1,12 @@
+{% include 'header.html' %}
+<body>
+<br><br><br>
+<div class="contentt">
+        <p>Вы действительно хотите выйти?</p>
+        <form action="{% url 'sign_out' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Выход</button>
+        </form>
+</div>
+{% include 'footer.html' %}
+</body>
