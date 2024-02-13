@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'tv_show',
     'website',
     'register',
+    'clothes',
 ]
 
 MIDDLEWARE = [
